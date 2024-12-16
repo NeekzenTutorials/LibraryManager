@@ -49,3 +49,4 @@ C:\Users\Asus\source\repos\LibraryManager\LibraryManager.App\obj\Debug\net8.0\re
 C:\Users\Asus\source\repos\LibraryManager\LibraryManager.App\obj\Debug\net8.0\LibraryManager.App.pdb
 C:\Users\Asus\source\repos\LibraryManager\LibraryManager.App\obj\Debug\net8.0\LibraryManager.App.genruntimeconfig.cache
 C:\Users\Asus\source\repos\LibraryManager\LibraryManager.App\obj\Debug\net8.0\ref\LibraryManager.App.dll
+C:\Users\Asus\source\repos\LibraryManager\LibraryManager.App\obj\Debug\net8.0\LibraryManager.App.sourcelink.json
