@@ -19,7 +19,28 @@ public class Program
             books.Add(new Book(info.Key, info.Value));
         }
 
+        // Display All Books
+        Console.WriteLine("Liste des Livres :");
         foreach (Book book in books)
             Console.WriteLine(book);
+
+        Console.WriteLine();
+        // LINQ
+        try
+        {
+            IEnumerable<Book> adventureBooks =
+                from book in books
+                where book.Type == "Aventure"
+                select book;
+
+            // Display Adventure Books
+            Console.WriteLine("Affichage des Livres d'aventure :");
+            foreach (Book book in adventureBooks)
+                Console.WriteLine(book);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
     }
 }
