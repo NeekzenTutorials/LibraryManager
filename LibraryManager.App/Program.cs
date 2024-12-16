@@ -6,14 +6,20 @@ public class Program
     {
         List<Book> books = new List<Book>();
 
-        for(int i = 0; i < 5; i++)
+        Dictionary<string, string> bookInfos = new Dictionary<string, string>{
+            { "Le magicien d'Oz", "Aventure" },
+            { "Seven", "Thriller" },
+            { "Les mysterieuses Cités d'or", "Aventure" },
+            { "Harry Potter et la Chambre des Secrets", "Aventure" },
+            { "Comment compiler en C", "Educatif" }
+        };
+
+        foreach (var info in bookInfos)
         {
-            Console.WriteLine("Livre " + i);
-            Console.WriteLine("Entrez le nom du livre :");
-            books.Add(new Book(Console.ReadLine(), "Aventure"));
+            books.Add(new Book(info.Key, info.Value));
         }
 
-        foreach(Book book in books)
-            Console.WriteLine(book.DisplayBook());
+        foreach (Book book in books)
+            Console.WriteLine(book);
     }
 }

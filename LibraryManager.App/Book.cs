@@ -8,18 +8,18 @@ namespace LibraryManager.App
 {
     public class Book
     {
-        public string? name;
-        public string? type;
+        public string Name { get; set; }
+        public string Type { get; set; }
 
         public Book(string name, string type)
         {
-            this.name = name;
-            this.type = type;
+            Name = name;
+            Type = type;
         }
 
-        public string DisplayBook()
+        public override string ToString()
         {
-            return "Nom du Livre: " + this.name + " | " + this.type;
+            return $"Titre: {Name}, Genre: {Type}";
         }
     }
 }
