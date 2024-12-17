@@ -4,7 +4,7 @@ using BusinessObjects.Entity;
 using DataAccessLayer.Repository;
 namespace Services.Services
 {
-    public class RepositoryManager
+    public class RepositoryManager : IRepositoryManager
     {
         private readonly Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
 

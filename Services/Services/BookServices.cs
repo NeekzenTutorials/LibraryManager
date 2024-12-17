@@ -3,11 +3,11 @@ using BusinessObjects.Enum;
 
 namespace Services.Services
 {
-    public class BookServices : IServices
+    public class BookServices : IBookServices
     {
-        private readonly RepositoryManager _repositoryManager;
+        private readonly IRepositoryManager _repositoryManager;
 
-        public BookServices(RepositoryManager repositoryManager)
+        public BookServices(IRepositoryManager repositoryManager)
         {
             _repositoryManager = repositoryManager;
         }

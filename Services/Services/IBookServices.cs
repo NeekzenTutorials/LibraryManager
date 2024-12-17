@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace Services.Services
 {
-    public interface IServices
+    public interface IBookServices : IServices
     {
+        List<Book> GetBookByType(TypeBook type);
     }
 }

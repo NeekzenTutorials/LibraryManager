@@ -2,11 +2,49 @@
 using BusinessObjects.Entity;
 using BusinessObjects.Enum;
 using DataAccessLayer.Repository;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Services.Services;
 using System.Data;
 
 public class Program
 {
+
+    private static IHost CreateHostBuilder(List<Book> books, List<Author> authors, List<Library> libraries)
+    {
+        return Host.CreateDefaultBuilder()
+            .ConfigureServices(services =>
+            {
+                // Register datas
+                services.AddSingleton(books);
+                services.AddSingleton(authors);
+                services.AddSingleton(libraries);
+
+                // Register All Repositories
+                services.AddTransient<IRepository<Book>, BookRepository>();
+                services.AddTransient<IRepository<Author>, AuthorRepository>();
+                services.AddTransient<IRepository<Library>, LibraryRepository>();
+
+                // Register RepositoryManager
+                services.AddTransient<IRepositoryManager, RepositoryManager>(serviceProvider =>
+                {
+                    var bookRepo = serviceProvider.GetRequiredService<IRepository<Book>>();
+                    var authorRepo = serviceProvider.GetRequiredService<IRepository<Author>>();
+                    var libraryRepo = serviceProvider.GetRequiredService<IRepository<Library>>();
+
+                    var manager = new RepositoryManager();
+                    manager.RegisterRepository(bookRepo);
+                    manager.RegisterRepository(authorRepo);
+                    manager.RegisterRepository(libraryRepo);
+
+                    return manager;
+                });
+
+                // Register BookServices
+                services.AddTransient<IBookServices, BookServices>();
+            })
+            .Build();
+    }
 
     private static void Main(string[] args)
     {
@@ -21,21 +59,21 @@ public class Program
         };
 
         List<Book> books = new List<Book>
-            {
-                new Book(1, "Le conte de Monte Cristo", 900, TypeBook.Aventure, 10, authors[0]),
-                new Book(2, "Les trois mousquetaires", 300, TypeBook.Aventure, 9, authors[0]),
-                new Book(3, "Apprendre le Java mais pas sur l'île de Java", 900, TypeBook.Enseignement, 10, authors[1]),
-                new Book(4, "Le RC Lens, un club pas comme les autres", 900, TypeBook.Histoire, 10, authors[3]),
-                new Book(5, "La RGPD, une protection contre l'injustice", 900, TypeBook.Juridique, 10, authors[0]),
-                new Book(6, "Les aventures de Tintin : Le temple du Soleil", 300, TypeBook.Aventure, 9, authors[4]),
-                new Book(7, "Le Signal", 1800, TypeBook.Horreur, 10, authors[5])
-            };
+        {
+            new Book(1, "Le conte de Monte Cristo", 900, TypeBook.Aventure, 10, authors[0]),
+            new Book(2, "Les trois mousquetaires", 300, TypeBook.Aventure, 9, authors[0]),
+            new Book(3, "Apprendre le Java mais pas sur l'île de Java", 900, TypeBook.Enseignement, 10, authors[1]),
+            new Book(4, "Le RC Lens, un club pas comme les autres", 900, TypeBook.Histoire, 10, authors[3]),
+            new Book(5, "La RGPD, une protection contre l'injustice", 900, TypeBook.Juridique, 10, authors[0]),
+            new Book(6, "Les aventures de Tintin : Le temple du Soleil", 300, TypeBook.Aventure, 9, authors[4]),
+            new Book(7, "Le Signal", 1800, TypeBook.Horreur, 10, authors[5])
+        };
 
         List<Library> libraries = new List<Library>
-            {
-                new Library(1, "Bibliothèque Roubaix", "44 Av. Jean Lebas, 59100 Roubaix"),
-                new Library(2, "Médiathèque Calais", "16 Rue du Pont Lottin, 62100 Calais")
-            };
+        {
+            new Library(1, "Bibliothèque Roubaix", "44 Av. Jean Lebas, 59100 Roubaix"),
+            new Library(2, "Médiathèque Calais", "16 Rue du Pont Lottin, 62100 Calais")
+        };
 
         // Set books in libraries
         foreach (var library in libraries)
@@ -46,20 +84,14 @@ public class Program
             }
             else if (library.Id == 2)
             {
-                library.Books = books.Where(b => b.Type != TypeBook.Aventure || b.Type != TypeBook.Horreur).ToList();
+                library.Books = books.Where(b => b.Type != TypeBook.Aventure && b.Type != TypeBook.Horreur).ToList();
             }
         }
 
-        BookRepository bookRepository = new BookRepository(books);
-        AuthorRepository authorRepository = new AuthorRepository(authors);
-        LibraryRepository libraryRepository = new LibraryRepository(libraries);
+        var host = CreateHostBuilder(books, authors, libraries);
 
-        RepositoryManager repositoryManager = new RepositoryManager();
-        repositoryManager.RegisterRepository(bookRepository);
-        repositoryManager.RegisterRepository(authorRepository);
-        repositoryManager.RegisterRepository(libraryRepository);
-
-        BookServices bookServices = new BookServices(repositoryManager);
+        var repositoryManager = host.Services.GetRequiredService<IRepositoryManager>();
+        var bookServices = host.Services.GetRequiredService<IBookServices>();
 
         try
         {
