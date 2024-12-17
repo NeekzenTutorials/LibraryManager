@@ -1,8 +1,11 @@
 ﻿using BusinessObjects.Entity;
 using BusinessObjects.Enum;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BusinessObjects.App
 {
+
+    [Table("book")]
     public class Book : IEntity
     {
         public int Id { get; set; }
@@ -12,7 +15,16 @@ namespace BusinessObjects.App
         public int Rate { get; set; }
 
         public Author Author { get; set; }
+
+        [Column("id_author")]
+        public int AuthorId { get; set; }
+
         public IEnumerable<Library> Libraries { get; set; }
+
+        public Book()
+        {
+            Libraries = new List<Library>();
+        }
 
         public Book(int id, string name, int pages, TypeBook type, int rate, Author author)
         {
@@ -27,4 +39,5 @@ namespace BusinessObjects.App
 
         public override string ToString() => $"Titre: {Name}, Genre: {Type}, Auteur: {Author}";
     }
+
 }

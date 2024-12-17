@@ -1,7 +1,9 @@
 ﻿using BusinessObjects.App;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BusinessObjects.Entity
 {
+    [Table("author")]
     public class Author : IEntity
     {
         public int Id { get; private set; }

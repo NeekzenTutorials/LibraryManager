@@ -8,7 +8,7 @@ namespace Services.Services
     {
         private readonly Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
 
-        public void RegisterRepository<T>(IRepository<T> repository) where T : class, IEntity
+        public void RegisterRepository<T>(IGenericRepository<T> repository) where T : class, IEntity
         {
             _repositories[typeof(T)] = repository;
         }
@@ -25,11 +25,11 @@ namespace Services.Services
             return _repository.Get(index);
         }
 
-        private IRepository<T> GetRepository<T>() where T : class, IEntity
+        private IGenericRepository<T> GetRepository<T>() where T : class, IEntity
         {
             if (_repositories.TryGetValue(typeof(T), out var repository))
             {
-                return (IRepository<T>)repository;
+                return (IGenericRepository<T>)repository;
             }
             throw new InvalidOperationException($"No repository registered for type {typeof(T)}");
         }
