@@ -2,9 +2,12 @@
 using BusinessObjects.Entity;
 using BusinessObjects.Enum;
 using DataAccessLayer.Repository;
+using Services.Services;
+using System.Data;
 
 public class Program
 {
+
     private static void Main(string[] args)
     {
         List<Author> authors = new List<Author>
@@ -34,6 +37,7 @@ public class Program
                 new Library(2, "Médiathèque Calais", "16 Rue du Pont Lottin, 62100 Calais")
             };
 
+        // Set books in libraries
         foreach (var library in libraries)
         {
             if (library.Id == 1)
@@ -50,11 +54,18 @@ public class Program
         AuthorRepository authorRepository = new AuthorRepository(authors);
         LibraryRepository libraryRepository = new LibraryRepository(libraries);
 
+        RepositoryManager repositoryManager = new RepositoryManager();
+        repositoryManager.RegisterRepository(bookRepository);
+        repositoryManager.RegisterRepository(authorRepository);
+        repositoryManager.RegisterRepository(libraryRepository);
+
+        BookServices bookServices = new BookServices(repositoryManager);
+
         try
         {
             // Get All books and Get book with ID 2
-            IEnumerable<Book> allBooks = bookRepository.GetAll();
-            Book singleBook = bookRepository.Get(2);
+            IEnumerable<Book> allBooks = repositoryManager.GetAll<Book>();
+            Book singleBook = repositoryManager.GetById<Book>(2);
 
             Console.WriteLine("Liste des Livres :");
             foreach (var book in allBooks)
@@ -68,8 +79,8 @@ public class Program
             Console.WriteLine();
 
             // Get All Authors and Get Author with ID 1
-            IEnumerable<Author> allAuthors = authorRepository.GetAll();
-            Author singleAuthor = authorRepository.Get(1);
+            IEnumerable<Author> allAuthors = repositoryManager.GetAll<Author>();
+            Author singleAuthor = repositoryManager.GetById<Author>(1);
 
             Console.WriteLine("Liste des Auteurs :");
             foreach (var author in allAuthors)
@@ -83,7 +94,7 @@ public class Program
             Console.WriteLine();
 
             // Display Libraries with their books
-            IEnumerable<Library> allLibraries = libraryRepository.GetAll();
+            IEnumerable<Library> allLibraries = repositoryManager.GetAll<Library>();
             Console.WriteLine("Liste des Bibliothèques et leurs Livres :");
             foreach (var library in allLibraries)
             {
@@ -96,7 +107,7 @@ public class Program
 
             Console.WriteLine();
 
-            IEnumerable<Book> adventureBooks = allBooks.Where(b => b.Type == TypeBook.Aventure);
+            IEnumerable<Book> adventureBooks = bookServices.GetBookByType(TypeBook.Aventure);
 
             // Display All Adventure's Books
             Console.WriteLine("Affichage des Livres d'aventure :");
